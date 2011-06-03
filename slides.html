@@ -11,8 +11,8 @@
             sync_button.attr('value', sync_on ? 'Turn Sync Off' : 'Turn Sync On');
           });
         
-      var socket = new io.Socket('sync.tabdeveloper.com', {
-        port: 1234
+      var socket = new io.Socket('your_node_address', {
+        port: your_node_port
       });
       socket.connect();
       socket.on('message', function(e) {
