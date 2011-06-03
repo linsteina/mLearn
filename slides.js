@@ -1,3 +1,9 @@
+var http = require('http')
+  , io = require('socket.io')
+  , express = require('express')
+  , app = express.createServer()
+  , sys = require('sys');
+
 var state = 1
   , clients = [];
 
