@@ -1,6 +1,7 @@
 // Required dependancies
 var io = require('socket.io');
 var app = require('express').createServer();
+var fs = require('fs');
 
 // State is the current slide position
 var state = 1
@@ -72,9 +73,17 @@ app.get('/reset', function(req, res) {
 app.get('/cornify', function(req, res) {
   send({ cornify: true });
 
-  res.send(''+state);
+  res.send(state.toString());
+});
+
+// Send the controller for any other request to this
+// Node.js server.
+app.get('*', function(req, res) {
+  fs.readFile('controller.html', function(buffer) {
+    res.send(buffer.toString());
+  });
 });
 
 // Listen on some high level port to avoid dealing
 // with authbind or root user privileges.
-app.listen(9001);
+app.listen(1987);
