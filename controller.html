@@ -1,66 +1,98 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <title>Page Title</title>
-    <style>
-        html, body {
-            height: 100%;
-            border: 0;
-            margin: 0;
-            padding: 0;
-        }
-        button {
-            height: 20%;
-            width: 100%;
-            display: block;
-            font-size: 24px;
-        }
-        .swipe {
-            width: 100%;
-            height: 40%;
-            color: #FFF;
-            font-size: 24px;
-            background-color: #333;
-        }
-    </style>
-    <script src="http://code.jquery.com/jquery.js"></script>
-    <script>
-        jQuery(function($) {
-            var originalX, x, swipe = $(".swipe"); 
-
-            $("button").bind("click", function() {
-                $.get("http://sync.tabdeveloper.com/"+ this.value);
-            });
-
-            // Swipe
-            swipe.bind('touchstart', function(e) {
-              originalX = e.originalEvent.touches[0].pageX;
-            })
-            .bind('touchmove', function(e) {
-              e.preventDefault();
-              x = e.originalEvent.touches[0].pageX;
-            })
-            .bind('touchend', function(e){
-                if ((originalX - x) > 50) {
-                  $.get("http://sync.tabdeveloper.com/advance");
-                }
-
-                if ((x - originalX) > 50) {
-                  $.get("http://sync.tabdeveloper.com/recede");
-                }
-            });
-        });
-    </script>
+  <title>HTML5 Slides Controller</title>
+  <style>
+    /* These styles are ugly but functional on iOS and Android */
+    html, body {
+      height: 100%;
+      border: 0;
+      margin: 0;
+      padding: 0;
+    }
+    button {
+      height: 20%;
+      width: 100%;
+      display: block;
+      font-size: 24px;
+    }
+    .swipe {
+      width: 100%;
+      height: 40%;
+      color: #FFF;
+      font-size: 24px;
+      background-color: #333;
+    }
+  </style>
 </head>
 <body>
-    <button value="reset">RESET</button>
-    <button value="refresh">REFRESH</button>
-    <div class="swipe"> SWIPE </div>
-    <!--<button value="advance">ADVANCE</button>
-    <button value="recede">RECEDE</button>-->
-    <button value="cornify">CORNIFY</button>
+  <!-- If you use this controller pattern, make sure the values
+       correspond correctly to your bound paths in the Node.js
+       server -->
+  <button value="reset">RESET</button>
+  <button value="refresh">REFRESH</button>
+  <div class="swipe"> SWIPE </div>
+  <button value="cornify">CORNIFY</button>
+
+  <script>
+  (function(window, document) {
+
+    // To assist with swipe calculation originalX holds the starting 
+    // touch X position, and x holds the ending X position.  Swipe
+    // is an area for moving between slides.  You may want to increase
+    // the swipe threshold variable if you find its too sensitive.
+    var originalX, x;
+    var swipe = document.querySelector('.swipe'); 
+    var swipeThreshold = 50;
+    var server = 'http://tabdeveloper.com:1987/';
+
+    // Luckily a response from the server is never required. So
+    // a basic XHR GET request to the server will trigger the
+    // action appropriately.
+    function xhr(url) {
+      var request = new XMLHttpRequest();
+      request.open('GET', url, true);
+      request.send(null);
+    }
+
+    // The values of the buttons correspond with the Node.js server
+    // routes.
+    document.getElementsByTagName('button').forEach(button) {
+      button.addEventListener('click', function() {
+        xhr(server + button.value);
+      });
+    });
+
+    // Swiping is relatively simple to implement and very effective to
+    // use.  Three events are needed, touchstart, touchmove, and
+    // touchend.  Touchstart sets the original position.
+    swipe.addEventListener('touchstart', function(e) {
+      originalX = e.touches[0].pageX;
+    }, true);
+
+    // Touchmove updates the end position.
+    swipe.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+      x = e.touches[0].pageX;
+    }, true);
+
+    // Touchend determines if a swipe occurred.
+    swipe.addEventListener('touchend', function(e) {
+      // If swipe is forward, advance.
+      if ((originalX - x) > swipeThreshold) {
+        xhr(server + 'advance');
+      }
+
+      // If swipe is backward, recede.
+      if ((x - originalX) > swipeThreshold) {
+        xhr(server + 'recede');
+      }
+    }, true);
+
+  })(this, this.document);
+  </script>
 </body>
 </html>
