@@ -1,33 +1,16 @@
 ...
 <head>
 ...
-  <script type="text/javascript" src="http://www.cornify.com/js/cornify.js"></script> 
-  <script src="http://your_node_address/socket.io/socket.io.js"></script> 
-  <script type="text/javascript"> 
-    jQuery(function($) {
-      var sync_on = true
-        , sync_button = $(".sync-button").bind('click', function() {
-            sync_on = !sync_on;
-            sync_button.attr('value', sync_on ? 'Turn Sync Off' : 'Turn Sync On');
-          });
-        
-      var socket = new io.Socket('your_node_address', {
-        port: your_node_port
-      });
-      socket.connect();
-      socket.on('message', function(e) {
-        if(sync_on && e.state) {
-          location.hash = e.state;
-        }
-        if(e.cornify) {
-          cornify_add();
-        }
-        if(e.refresh) {
-          location.reload(true);
-        }
-      });
-    });
-  </script> 
+  <!-- HTML5 slides scripts, put these underneath -->
+  <script src="http://www.cornify.com/js/cornify.js"></script> 
+  <script src="http://tabdeveloper.com:1987/socket.io/socket.io.js"></script> 
+  <script src="client.js"></script> 
 ...
 </head>
+...
+
+<body>
+...
+<!-- Optionally slap in a sync button -->
+<input type="button" class="sync-button" value="Turn Sync Off">
 ...
