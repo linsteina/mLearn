@@ -59,11 +59,12 @@
     }
 
     // The values of the buttons correspond with the Node.js server
-    // routes.
-    document.getElementsByTagName('button').forEach(button) {
+    // routes.  The [].slice.call coerces the NodeList returned by
+    // getElementsByTagName into an array so that forEach is usable.
+    [].slice.call(document.getElementsByTagName('button')).forEach(function(button) {
       button.addEventListener('click', function() {
         xhr(server + button.value);
-      });
+      }, true);
     });
 
     // Swiping is relatively simple to implement and very effective to
