@@ -60,7 +60,8 @@
 
     // The values of the buttons correspond with the Node.js server
     // routes.
-    [].slice.call(document.getElementsByTagName('button')).forEach(function(button) {
+    var buttons = [].slice.call(document.getElementsByTagName('button'));
+    buttons.forEach(function(button) {
       button.addEventListener('click', function() {
         xhr(server + button.value);
       }, true);

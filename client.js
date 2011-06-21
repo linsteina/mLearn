@@ -10,12 +10,13 @@
   if(syncButton) {
     syncButton.addEventListener('click', function() {
       syncAllow = !syncAllow;
-      syncButton.setAttribute('value', syncAllow ? 'Turn Sync Off' : 'Turn Sync On');
+      syncButton.setAttribute('value', syncAllow ? 'Turn Sync Off'
+        : 'Turn Sync On');
     }, true);
   }
 
-  // The socket.io client side library connects to your server, the node address can
-  // be a domain name or an ip address.
+  // The socket.io client side library connects to your server, the node address
+  // can be a domain name or an ip address.
   var socket = new io.Socket('tabdeveloper.com', { port: 1987 });
 
   // Connect the websocket (or fallback)
