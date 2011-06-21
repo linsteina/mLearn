@@ -79,7 +79,7 @@ app.get('/cornify', function(req, res) {
 // Send the controller for any other request to this
 // Node.js server.
 app.get('*', function(req, res) {
-  fs.readFile('controller.html', function(buffer) {
+  fs.readFile('controller.html', function(err, buffer) {
     res.send(buffer.toString());
   });
 });
