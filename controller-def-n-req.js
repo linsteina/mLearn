@@ -1,10 +1,3 @@
-// To assist with swipe calculation originalX holds the starting 
-// touch X position, and x holds the ending X position.  Swipe
-// is an area for moving between slides.  You may want to increase
-// the swipe threshold variable if you find its too sensitive.
-var originalX, x;
-var swipe = document.querySelector('.swipe'); 
-var swipeThreshold = 50;
 var server = 'http://tabdeveloper.com:1987/';
 
 // Luckily a response from the server is never required. So
