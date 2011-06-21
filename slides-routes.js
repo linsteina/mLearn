@@ -1,38 +1,3 @@
-// Required dependancies
-var io = require('socket.io');
-var app = require('express').createServer();
-var fs = require('fs');
-
-// State is the current slide position
-var state = 1
-// Clients is a list of users who have connected
-var clients = [];
-// Bind socket.io to express
-var socket = io.listen(app);
-
-// For each connection made add the client to the
-// list of clients.
-socket.on('connection', function(client) {
-  clients.push(client);
-});
-
-// This is a simple wrapper for sending a message
-// to all the connected users and pruning out the
-// disconnected ones.
-function send(message) {
-  // Iterate through all potential clients
-  clients.forEach(function(client) {
-    // User is still connected, send message
-    if(client._open) {
-      client.send(message);
-    }
-    // Prune out disconnected user
-    else {
-      delete client;
-    }
-  });
-}
-
 // Advancing will... move the slides forward!
 app.get('/advance', function(req, res) {
   // Increment and send over socket
@@ -83,7 +48,3 @@ app.get('*', function(req, res) {
     res.send(buffer.toString());
   });
 });
-
-// Listen on some high level port to avoid dealing
-// with authbind or root user privileges.
-app.listen(1987);
