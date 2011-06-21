@@ -1,72 +1,80 @@
-var http = require('http')
-  , io = require('socket.io')
-  , express = require('express')
-  , app = express.createServer()
-  , sys = require('sys');
+// Required dependancies
+var io = require('socket.io');
+var app = require('express').createServer();
 
+// State is the current slide position
 var state = 1
-  , clients = [];
-
+// Clients is a list of users who have connected
+var clients = [];
+// Bind socket.io to express
 var socket = io.listen(app);
-socket.on('connection', function(client){
+
+// For each connection made add the client to the
+// list of clients.
+socket.on('connection', function(client) {
   clients.push(client);
 });
 
-app.get('/advance', function(req, res) {
-  state++;
+// This is a simple wrapper for sending a message
+// to all the connected users and pruning out the
+// disconnected ones.
+function send(message) {
+  // Iterate through all potential clients
   clients.forEach(function(client) {
+    // User is still connected, send message
     if(client._open) {
-      client.send({ state: state });
+      client.send(message);
+    }
+    // Prune out disconnected user
+    else {
+      delete client;
     }
   });
+}
 
-  res.send(''+state);
+// Advancing will... move the slides forward!
+app.get('/advance', function(req, res) {
+  // Increment and send over socket
+  state++;
+  send({ state: state });
+
+  // Send the state as a response
+  res.send(state.toString());
 });
 
+// Receding will... move the slides backwards!
 app.get('/recede', function(req, res) {
   state--;
-  clients.forEach(function(client) {
-    if(client._open) {
-      client.send({ state: state });
-    }
-  });
+  send({ state: state });
 
-  res.send(''+state);
+  res.send(state.toString());
 });
 
+// This will allow the presenter to clear the
+// slides of any cornification.
 app.get('/refresh', function(req, res) {
-  clients.forEach(function(client) {
-    if(client._open) {
-      client.send({ refresh: true });
-    }
-  });
+  client.send({ refresh: true });
 
-  res.send(''+state);
+  res.send(state.toString());
 });
 
+// Reset will not refresh cornfication, but
+// will send the slides back to the beginning.
 app.get('/reset', function(req, res) {
   state = 1;
-  clients.forEach(function(client) {
-    if(client._open) {
-      client.send({ state: state });
-    }
-  });
+  send({ state: state });
 
-  res.send(''+state);
+  res.send(state.toString());
 });
 
+// Give your viewers what they really want...
+// an unrepentable amount of unicorns.
 app.get('/cornify', function(req, res) {
-  clients.forEach(function(client) {
-    if(client._open) {
-      client.send({ cornify: true });
-    }
-  });
+  send({ cornify: true });
 
   res.send(''+state);
 });
 
-app.get('*', function(req, res) {
-  res.send('Cloud slide syncing shiz!');
-});
-
-app.listen(your_port);
+// Listen on some high level port to avoid dealing
+// with authbind or root user privileges.
+app.listen(9001);
