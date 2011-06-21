@@ -11,7 +11,7 @@
     syncButton.addEventListener('click', function() {
       syncAllow = !syncAllow;
       syncButton.setAttribute('value', syncAllow ? 'Turn Sync Off' : 'Turn Sync On');
-    });
+    }, true);
   }
 
   // The socket.io client side library connects to your server, the node address can
